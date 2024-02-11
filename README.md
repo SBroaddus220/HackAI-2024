@@ -1,7 +1,8 @@
 # HackAI-2024
 Repo for HackAI 2024 
 
-# Installation
+# Quick Start
+
 ## Vite Project
 1. Navigate to `vite-project`
 ```bash
@@ -24,12 +25,14 @@ npm run dev
 cd backend
 ```
 
-2. Install dependencies (A virtual environment is recommended)
+2. Create a `.env` file following the `.env.template` file. 
+
+3. Install dependencies (A virtual environment is recommended)
 ```bash
 -m pip install -r requirements.txt
 ```
 
-3. Run Flask application
+4. Run Flask application
 ```bash
 flask run
 ```
