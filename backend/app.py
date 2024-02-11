@@ -8,12 +8,13 @@ CORS(app)  # Enable CORS for all routes
 def hello_world():
     return "Hello, World!"
 
-@app.route("/submit-text", methods=["POST"])  # Adjusted route to match proxy
+@app.route("/submit-text", methods=["POST"])
 def submit_text():
     data = request.json
     text = data["text"]
+    # Your processing logic here
     print(text)
     return jsonify({"message": "Text received successfully"})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5000)  # Specify the port for Flask to run on

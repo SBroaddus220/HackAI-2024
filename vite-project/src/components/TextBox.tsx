@@ -4,6 +4,11 @@ import '../App.css';
 function TextBoxComponent() {
     const [text, setText] = useState<string>('');
 
+    const getServerURL = () => {
+        const { protocol, hostname, port } = window.location;
+        return `${protocol}//${hostname}:${port}/submit-text`;
+    };
+
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
@@ -33,7 +38,7 @@ function TextBoxComponent() {
             }
 
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error:', error.message);
         }
     };
 
