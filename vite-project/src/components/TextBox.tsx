@@ -13,8 +13,6 @@ function TextBoxComponent() {
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
-
-
             // Send the text to the server
             console.log("Submitting text: ", text);
             const response = await fetch('/api/submit-text', {
@@ -41,6 +39,16 @@ function TextBoxComponent() {
                     role: 'user',
                     message: text
                 });
+
+                // Handle the response from the server
+                if (responseData.response) {
+                    console.log(responseData.response);
+                    addMessage({
+                        datetime: new Date().toISOString(),
+                        role: 'bot',
+                        message: responseData.response.message
+                    });
+                }
             } catch (error) {
                 console.error('Server returned an error:', response.status, response.statusText);
             }

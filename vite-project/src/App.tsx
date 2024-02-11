@@ -6,10 +6,10 @@ import { MessagesProvider } from './contexts/MessagesContext';
 
 function App() {
   return (
-    <div className="App">
+    <div class = "box">
       <MessagesProvider>
-        <TextBoxComponent />
         <Messages />
+        <TextBoxComponent />
       </MessagesProvider>
     </div>
   );

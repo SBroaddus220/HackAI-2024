@@ -38,7 +38,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.combine_documents import create_stuff_documents_chain
 
 # Local imports
-from config import LOGGER_CONFIG
+# from backend.config import LOGGER_CONFIG
 
 # **********
 # Sets up logger
@@ -79,6 +79,7 @@ def load_documents(documents_dir: Path) -> List[Document]:
         
     return docs
 
+
 def store_documents(docs: List[Document]) -> Chroma:
     """Stores documents in a ChromaDB instance.
 
@@ -98,7 +99,8 @@ def store_documents(docs: List[Document]) -> Chroma:
     
     return db
 
-def query_with_retrieval(input: str, db, docs: List[], openai_api_key) -> str:
+
+def query_with_retrieval(input: str, db, docs, openai_api_key) -> str:
     # Retrieve documents with similar content to input
     logger.info("Retrieving documents with similar content to input...")
     query = input
@@ -146,28 +148,7 @@ def query_with_retrieval(input: str, db, docs: List[], openai_api_key) -> str:
 
 # **********
 def main():
-
-    
-    # ****
-    import logging.config
-    logging.disable(logging.DEBUG)
-    logging.config.dictConfig(LOGGER_CONFIG)
-    
-    # ****
-    # Load environment variables
-    load_dotenv()
-
-    # Get environment variables
-    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-    if not OPENAI_API_KEY:
-        raise ValueError("OPENAI_API_KEY environment variable not set")
-
-    # ****
-    # load the document(s) and split it into chunks
-    docs = load_documents("./documents")    
-    db = store_documents(docs)
-    print(query_with_retrieval("What am I planning to do on Monday Evening from 6PM to 10PM?", db, docs, OPENAI_API_KEY))
-
+    pass
 
 # **********
 if __name__ == "__main__":
