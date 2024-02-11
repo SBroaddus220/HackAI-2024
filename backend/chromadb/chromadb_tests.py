@@ -98,7 +98,7 @@ def store_documents(docs: List[Document]) -> Chroma:
     
     return db
 
-def query_with_retrieval(input: str, db, docs, openai_api_key) -> str:
+def query_with_retrieval(input: str, db, docs: List[], openai_api_key) -> str:
     # Retrieve documents with similar content to input
     logger.info("Retrieving documents with similar content to input...")
     query = input
@@ -106,6 +106,8 @@ def query_with_retrieval(input: str, db, docs, openai_api_key) -> str:
     context = " ".join([doc.page_content for doc in retrieved_docs])
     
     # Create the language model
+    
+    ## NEED TO CHANGE THIS
     logger.info("Creating language model...")
     llm = ChatOpenAI(openai_api_key=openai_api_key)
 

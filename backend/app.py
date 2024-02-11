@@ -7,10 +7,6 @@ CORS(app)  # Enable CORS for all routes
 
 messages = []
 
-
-messages = []
-
-
 @app.route("/")
 def hello_world():
     return "Hello, World!"

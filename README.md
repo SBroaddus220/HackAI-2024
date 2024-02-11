@@ -29,13 +29,7 @@ cd backend
 -m pip install -r requirements.txt
 ```
 
-3. Set environment variables (Linux ver.)
-```bash
-export FLASK_APP=app.py
-export FLASK_ENV=development
-```
-
-4. Run Flask application
+3. Run Flask application
 ```bash
 flask run
 ```
@@ -51,7 +45,7 @@ flask run
 * Chroma
 * LangChain
 * Flask
-* React
+* React (Vite)
 
 
 # Actual Project
