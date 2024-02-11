@@ -7,15 +7,31 @@ function TextBoxComponent() {
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
-            const response = await fetch('/submit-text', {
+
+
+            // Send the text to the server
+            console.log("Submitting text: ", text);
+            const response = await fetch('/api/submit-text', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ text }),
             });
-            const responseData = await response.json();
-            console.log(responseData.message);
+
+            // If the response is not OK, throw an error
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            // Parse the JSON response
+            try {
+                const responseData = await response.json();
+                console.log(responseData.message);
+            } catch (e) {
+                console.error('Error parsing JSON:', e);
+            }
+
         } catch (error) {
             console.error('Error:', error);
         }
