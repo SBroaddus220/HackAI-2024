@@ -1,9 +1,10 @@
+// src/components/TextBox.tsx
 import React, { useState, FormEvent } from 'react';
-import '../App.css';
+import { useMessages } from '../contexts/MessagesContext';
 
 function TextBoxComponent() {
     const [text, setText] = useState<string>('');
-
+    const { addMessage } = useMessages();
     const getServerURL = () => {
         const { protocol, hostname, port } = window.location;
         return `${protocol}//${hostname}:${port}/submit-text`;
@@ -33,14 +34,21 @@ function TextBoxComponent() {
             try {
                 const responseData = await response.json();
                 console.log(responseData.message);
-            } catch (e) {
-                console.error('Error parsing JSON:', e);
+                setText(''); // Clear the text after successful submission
+                // Add the new message to the context
+                addMessage({
+                    datetime: new Date().toISOString(),
+                    role: 'user',
+                    message: text
+                });
+            } catch (error) {
+                console.error('Server returned an error:', response.status, response.statusText);
             }
-
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error:', error.message);
         }
     };
+
 
     return (
         <div className="center-container">
