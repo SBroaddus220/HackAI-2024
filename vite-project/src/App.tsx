@@ -6,7 +6,7 @@ import { MessagesProvider } from './contexts/MessagesContext';
 
 function App() {
   return (
-    <div class = "box">
+    <div>
       <MessagesProvider>
         <Messages />
         <TextBoxComponent />
