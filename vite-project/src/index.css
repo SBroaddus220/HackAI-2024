@@ -53,6 +53,7 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+  
 }
 
 
@@ -67,4 +68,13 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+.mt-1 { margin-top: 1rem; }
+.text-center { text-align: center; }
+
+footer {
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 1rem 0;
+  text-align: center;
 }

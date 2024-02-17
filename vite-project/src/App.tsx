@@ -12,6 +12,7 @@ function App() {
         <TextBoxComponent />
       </MessagesProvider>
     </div>
+    
   );
 }
 

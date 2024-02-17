@@ -37,4 +37,5 @@ export const MessagesProvider = ({ children }: MessagesProviderProps) => {
             {children}
         </MessagesContext.Provider>
     );
+    
 };
