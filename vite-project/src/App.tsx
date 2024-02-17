@@ -8,8 +8,8 @@ import './App.css';
 function App() {
   return (
     <div style={{
-      position: 'absolute', left: '50%', top: '50%',
-      transform: 'translate(-50%, -50%)' 
+      position: 'relative', top: '50%', left: '50%',
+      transform: 'translate(-50%)'
     }} >
       <MessagesProvider>
         <Messages />

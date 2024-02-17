@@ -4,20 +4,22 @@
     align-items: flex-start;
     padding: 16px;
     overflow-y: auto;
-    height: calc(100% - 56px); /* Adjust for the height of the input field */
+    margin-top: 50;
+    margin-bottom: auto;
   }
   
   .User-message {
     align-self: flex-end;
     background-color: #007bff;
     color: white;
+    margin-bottom: 10 !important; /* Add margin between user messages */
   }
-  
+
   .Bot-message {
     align-self: flex-start;
     background-color: #d23232;
+    margin-bottom: 10 !important; /* Add margin between bot messages */
   }
-  
   .timestamp {
     font-size: 0.8em;
     color: #777;
