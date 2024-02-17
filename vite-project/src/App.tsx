@@ -3,6 +3,7 @@ import React from 'react';
 import TextBoxComponent from './components/TextBox';
 import Messages from './components/Messages';
 import { MessagesProvider } from './contexts/MessagesContext';
+import './App.css';
 
 function App() {
   return (
