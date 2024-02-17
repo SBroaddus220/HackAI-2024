@@ -11,6 +11,7 @@ import datetime
 import logging
 from dotenv import load_dotenv
 import os
+from pathlib import Path
 
 from chromadb_tests.chromadb_tests import load_documents, store_documents, query_with_retrieval
 
@@ -33,12 +34,21 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 if not OPENAI_API_KEY:
     raise ValueError("OPENAI_API_KEY environment variable not set")
 
+# **********
+def init_chromadb():
+    global db
+    documents_dir = Path("./documents")
+    docs = load_documents(documents_dir)
+    db = store_documents(docs)
+    logger.info("ChromaDB initialized with documents.")
+
+# Call the function to initialize ChromaDB at the start of the app
+init_chromadb()
 
 # **********
 @app.route("/")
 def hello_world():
     return "Hello, World!"
-
 
 @app.route("/submit-text", methods=["POST"])
 def submit_text():
@@ -47,26 +57,23 @@ def submit_text():
     
     # ****
     # User message
-    user_message =  {
-                        "datetime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        "role": "user",
-                        "message": text,
-                    }
+    user_message = {
+        "datetime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "role": "user",
+        "message": text,
+    }
     messages.append(user_message)
     
     # ****
     # Generate response
-    docs = load_documents(text)  # Load the documents
-    db = store_documents(docs)  # Store the documents
-    response = query_with_retrieval(text, db, docs, OPENAI_API_KEY)
-    response_message =  {
-                            "datetime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                            "role": "user",
-                            "message": response,
-                        }
+    response = query_with_retrieval(text, db, OPENAI_API_KEY)  # Notice db is used directly
+    response_message = {
+        "datetime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "role": "user",
+        "message": response,
+    }
     messages.append(response_message)
     
-
     print(text)
     print(response)
     return jsonify({"message": "Text received successfully", "response": response_message})
@@ -86,5 +93,7 @@ if __name__ == "__main__":
     
     # Load environment variables
     load_dotenv()
-        
-    app.run(debug=True, port=5000)  # Specify the port for Flask to run on
+    
+    app.run(debug=True, port=5000)
+    
+
