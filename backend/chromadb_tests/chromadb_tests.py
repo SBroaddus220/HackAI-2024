@@ -29,13 +29,16 @@ from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
 )
 from langchain_community.vectorstores import Chroma
-from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI, OpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.combine_documents import create_stuff_documents_chain
+
+from langchain.schema import HumanMessage, SystemMessage
+
 
 # Local imports
 # from backend.config import LOGGER_CONFIG
@@ -100,56 +103,34 @@ def store_documents(docs: List[Document]) -> Chroma:
     return db
 
 
-def query_with_retrieval(input: str, db, docs, openai_api_key) -> str:
+def query_with_retrieval(input: str, db, openai_api_key) -> str:
     # Retrieve documents with similar content to input
     logger.info("Retrieving documents with similar content to input...")
-    query = input
-    retrieved_docs = db.similarity_search(query)
+    retrieved_docs = db.similarity_search(input)
     context = " ".join([doc.page_content for doc in retrieved_docs])
     
     # Create the language model
-    
-    ## NEED TO CHANGE THIS
     logger.info("Creating language model...")
-    llm = ChatOpenAI(openai_api_key=openai_api_key)
+    llm = OpenAI(openai_api_key=openai_api_key)
 
-    # Create the embeddings
-    logger.info("Creating embeddings...")
-    embeddings = OpenAIEmbeddings()
+    # Formulate the prompt with context and question
+    messages = f"""Answer the following questions based only on the provided context:
 
-    # Create the vector store
-    logger.info("Creating vector store...")
-    text_splitter = RecursiveCharacterTextSplitter()
-    documents = text_splitter.split_documents(docs)
-    vector = FAISS.from_documents(documents, embeddings)
+                    {context}
+                    
+                    Question: {input}"""
 
-    # Create the document chain
-    prompt = ChatPromptTemplate.from_template("""Answer the following question based only on the provided context:
+    # Invoke the language model with the prompt
+    logger.info("Invoking language model with prompt...")
+    response = llm.invoke(messages)
 
-    <context>
-    {context}
-    </context>
-
-    Question: {input}""")
-
-    # Create the document chain
-    logger.info("Creating document and retrieval chain...")
-    document_chain = create_stuff_documents_chain(llm, prompt)
-
-    # Create the retrieval chain
-    retriever = vector.as_retriever()
-    retrieval_chain = create_retrieval_chain(retriever, document_chain)
-
-    # Invoke the chain
-    logger.info("Invoking chain...")
-    response = retrieval_chain.invoke({"input": input})
-    return response["answer"]
+    return response
 
 
 # **********
 def main():
     pass
 
-# **********
+# ********** 
 if __name__ == "__main__":
     main()
