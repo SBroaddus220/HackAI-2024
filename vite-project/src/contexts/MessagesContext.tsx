@@ -29,7 +29,7 @@ export const MessagesProvider = ({ children }: MessagesProviderProps) => {
     const [messages, setMessages] = useState<IMessage[]>([]);
 
     const addMessage = (newMessage: IMessage) => {
-        setMessages(prevMessages => [newMessage, ...prevMessages]);
+        setMessages(prevMessages => [...prevMessages, newMessage]);
     };
 
     return (

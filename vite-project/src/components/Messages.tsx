@@ -1,21 +1,20 @@
-// src/components/Messages.tsx
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useMessages } from '../contexts/MessagesContext';
+import './Messages.css';
 
 const Messages: React.FC = () => {
     const { messages } = useMessages();
 
     return (
-        <div>
-            <h2>Messages:</h2>
-            <ul>
-                {messages.map((message, index) => (
-                    <li key={index}>{message.message} - {message.datetime}</li>
-                ))}
-            </ul>
+        <div className="messages-container">
+            {messages.map((message, index) => (
+                <div key={index} className={`${message.role}-message`}>
+                    {message.role}: {message.message}
+                    <div className="timestamp">{message.datetime}</div>
+                </div>
+            ))}
         </div>
     );
 };
 
 export default Messages;
-

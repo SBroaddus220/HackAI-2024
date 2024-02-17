@@ -36,7 +36,7 @@ function TextBoxComponent() {
                 // Add the new message to the context
                 addMessage({
                     datetime: new Date().toISOString(),
-                    role: 'user',
+                    role: 'User',
                     message: text
                 });
 
@@ -45,7 +45,7 @@ function TextBoxComponent() {
                     console.log(responseData.response);
                     addMessage({
                         datetime: new Date().toISOString(),
-                        role: 'bot',
+                        role: 'Bot',
                         message: responseData.response.message
                     });
                 }
