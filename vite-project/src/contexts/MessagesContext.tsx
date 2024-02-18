@@ -14,11 +14,7 @@ interface IMessagesContext {
 }
 
 const defaultState = {
-    messages: [{
-        datetime: "",
-        role: "Bot",
-        message: "Welcome! What can I help you with today?"
-    }],
+    messages: [],
     addMessage: () => { }
 };
 
@@ -31,12 +27,7 @@ interface MessagesProviderProps {
 }
 
 export const MessagesProvider = ({ children }: MessagesProviderProps) => {
-    // Initialize the messages state with the default welcome message
-    const [messages, setMessages] = useState<IMessage[]>([{
-        datetime: new Date().toISOString(), // Use the current time for the datetime
-        role: "Bot",
-        message: "Welcome! What can I help you with today?"
-    }]);
+    const [messages, setMessages] = useState<IMessage[]>([]);
 
     const addMessage = (newMessage: IMessage) => {
         setMessages(prevMessages => [...prevMessages, newMessage]);
@@ -47,5 +38,5 @@ export const MessagesProvider = ({ children }: MessagesProviderProps) => {
             {children}
         </MessagesContext.Provider>
     );
-};
 
+};
