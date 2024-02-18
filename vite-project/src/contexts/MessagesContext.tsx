@@ -5,6 +5,7 @@ interface IMessage {
     datetime: string;
     role: string;
     message: string;
+    context: string;
 }
 
 interface IMessagesContext {

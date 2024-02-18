@@ -1,29 +1,23 @@
-// src/App.tsx
-import React from 'react';
+// App.tsx
+import React, { useState } from 'react';
 import TextBoxComponent from './components/TextBox';
 import Messages from './components/Messages';
 import { MessagesProvider } from './contexts/MessagesContext';
-import Footer from './components/Footer';
-import './App.css';
 
 function App() {
-  return (
-    <div style={{
-      position: 'relative', top: '50%', left: '50%',
-      transform: 'translate(-50%)'
-    }} >
-      
-      <MessagesProvider>
+    const [selectedOption, setSelectedOption] = useState<string>('');
 
-        <Messages />
-        
-        <TextBoxComponent />
-      </MessagesProvider>
-      <Footer />
-    </div>
-    
-    
-  );
+    return (
+        <div style={{
+            position: 'absolute', left: '50%', top: '50%',
+            transform: 'translate(-50%, -50%)'
+        }} >
+            <MessagesProvider>
+                <Messages />
+                <TextBoxComponent selectedOption={selectedOption} />
+            </MessagesProvider>
+        </div>
+    );
 }
 
 export default App;
