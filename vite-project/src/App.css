@@ -58,7 +58,11 @@
 .submit-button:hover {
   background-color: #0056b3; /* Darker shade on hover */
 }
-
+.infoFooter{
+  margin-top: 150px;
+  border-radius: 50px;
+  padding: 5px;
+}
 .submit-button:active {
   transform: scale(0.98); /* Slightly shrink the button when clicked */
 }
