@@ -29,6 +29,10 @@ from langchain_community.embeddings.sentence_transformer import (
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAI
 
+from langchain_community.document_loaders import PyPDFLoader
+
+CHUNK_SIZE = 1000
+CHUNK_OVERLAP = 500
 
 
 # Local imports
@@ -40,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 
 # **********
-def load_documents(documents_dir: Path) -> List[Document]:
+def load_txt_documents(documents_dir: Path) -> List[Document]:
     """Loads `*.txt` documents from a directory into a list of documents to import into ChromaDB.
 
     Args:
@@ -50,12 +54,12 @@ def load_documents(documents_dir: Path) -> List[Document]:
         list: List of documents to import into ChromaDB.
     """
     # Directory containing the documents
-    documents_dir = Path("./documents")
+    documents_dir = Path("./documents/txt")
 
     # Setup for splitting documents into chunks
-    # text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    # text_splitter = CharacterTextSplitter
     text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-        'gpt2', chunk_size=100, chunk_overlap=0
+        'gpt2', chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
     )
 
     # This will store chunks from all documents
@@ -67,6 +71,42 @@ def load_documents(documents_dir: Path) -> List[Document]:
         # Load the document
         loader = TextLoader(str(file_path))
         document_content = loader.load()
+        
+        # Split the current document into chunks
+        document_chunks = text_splitter.split_documents(document_content)
+        
+        # Add the chunks of the current document to the overall list
+        docs.extend(document_chunks)
+        
+    return docs
+
+def load_pdf_documents(documents_dir: Path) -> List[Document]:
+    """Loads `*.pdf` documents from a directory into a list of documents to import into ChromaDB.
+
+    Args:
+        documents_dir (Path): Path to directory containing documents.
+
+    Returns:
+        list: List of documents to import into ChromaDB.
+    """
+    # Directory containing the documents
+    documents_dir = Path("./documents/pdf")
+
+    # Setup for splitting documents into chunks
+    # text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        'gpt2', chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
+    )
+
+    # This will store chunks from all documents
+    docs = []
+
+    # Iterate over each text file in the directory
+    for file_path in documents_dir.glob('*.pdf'):  # Adjust the pattern if your files have a different extension
+        logger.info(f"Loading document: {file_path}")
+        # Load the document
+        loader = PyPDFLoader(str(file_path))
+        document_content = loader.load_and_split()
         
         # Split the current document into chunks
         document_chunks = text_splitter.split_documents(document_content)

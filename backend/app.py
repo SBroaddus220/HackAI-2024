@@ -13,7 +13,8 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 
-from chromadb_tests.chromadb_tests import load_documents, store_documents, query_with_retrieval
+from chromadb_tests.chromadb_tests import load_txt_documents, load_pdf_documents
+from chromadb_tests.chromadb_tests import store_documents, query_with_retrieval
 
 from config import LOGGER_CONFIG
 
@@ -37,8 +38,10 @@ if not OPENAI_API_KEY:
 # **********
 def init_chromadb():
     global db
-    documents_dir = Path("./documents")
-    docs = load_documents(documents_dir)
+    documents_txt_dir = Path("./documents/txt")
+    documents_pdf_dir = Path("./documents/pdf")
+    docs = load_txt_documents(documents_txt_dir)
+    docs.extend(load_pdf_documents(documents_pdf_dir))
     db = store_documents(docs)
     logger.info("ChromaDB initialized with documents.")
 
