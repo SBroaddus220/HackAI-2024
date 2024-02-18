@@ -3,6 +3,7 @@ import React from 'react';
 import TextBoxComponent from './components/TextBox';
 import Messages from './components/Messages';
 import { MessagesProvider } from './contexts/MessagesContext';
+import Footer from './components/Footer';
 import './App.css';
 
 function App() {
@@ -18,11 +19,7 @@ function App() {
         
         <TextBoxComponent />
       </MessagesProvider>
-      <footer className = 'infoFooter'>
-        <a href='/authors.html'>Creators &emsp;&emsp;</a>
-        <a href='/resources.html'>Resources Utilized &emsp;&emsp;</a>
-        <a href='/contactus.html'>Contact Us</a>
-      </footer>
+      <Footer />
     </div>
     
     
