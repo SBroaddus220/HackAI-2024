@@ -1,7 +1,7 @@
 import requests
 
 # Define the URL of the API
-url = 'http://localhost:8083/completion'
+url = 'http://localhost:8084/completion'
 
 # Define the headers
 headers = {
