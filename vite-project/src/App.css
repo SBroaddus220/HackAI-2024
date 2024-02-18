@@ -26,7 +26,10 @@
 }
 
 .center-input {
+<<<<<<< HEAD
   align-self: center;
+=======
+>>>>>>> parent of 19d84a7 (Initial Message Addition and Better Chatbox)
   text-align: center;
   margin-bottom: 10px;
 }

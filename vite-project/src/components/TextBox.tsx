@@ -62,12 +62,13 @@ const TextBoxComponent: React.FC<TextBoxProps> = ({ selectedOption }) => {
                 />
                 <br/>
                 <button type="submit" disabled={isSubmitting} className = 'submitButton'>Submit</button>
-                {isSubmitting && <div className="spinner"></div>} {/* Conditionally render the spinner */}
+                
             </form>
-            <select onChange={handleSelection}>
+            {isSubmitting && <div className="spinner"></div>} {/* Conditionally render the spinner */}
+            {/* <select onChange={handleSelection}>
                 <option value="reqs">Major Requirements for CSE</option>
                 <option value="specs">Specialization Option</option>
-            </select>
+            </select> */}
         </div>
     );
 };
