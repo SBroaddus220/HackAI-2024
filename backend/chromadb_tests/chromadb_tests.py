@@ -14,30 +14,21 @@ The following details the retrieval process:
 - The response from the OpenAI language model is printed.
 """
 
-import os
 import logging
 from typing import List
 from pathlib import Path
-from dotenv import load_dotenv
 
-# LangChain imports (so many =_=)
-from langchain.chains import create_retrieval_chain
+# LangChain imports
 from langchain_core.documents import Document
 from langchain.text_splitter import CharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
 from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
 )
 from langchain_community.vectorstores import Chroma
-from langchain_openai import ChatOpenAI, OpenAI
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-from langchain_openai import OpenAIEmbeddings
-from langchain_community.vectorstores import FAISS
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_openai import OpenAI
 
-from langchain.schema import HumanMessage, SystemMessage
 
 
 # Local imports
@@ -62,7 +53,10 @@ def load_documents(documents_dir: Path) -> List[Document]:
     documents_dir = Path("./documents")
 
     # Setup for splitting documents into chunks
-    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    # text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        'gpt2', chunk_size=100, chunk_overlap=0
+    )
 
     # This will store chunks from all documents
     docs = []
@@ -107,6 +101,44 @@ def query_with_retrieval(input: str, db, openai_api_key) -> str:
     # Retrieve documents with similar content to input
     logger.info("Retrieving documents with similar content to input...")
     retrieved_docs = db.similarity_search(input)
+    
+    # ****
+    # Test using Cohere to compress and rerank the documents
+    # from langchain.text_splitter import RecursiveCharacterTextSplitter
+    # from langchain_community.document_loaders import TextLoader
+    # from langchain_community.embeddings import CohereEmbeddings
+    # from langchain_community.vectorstores import FAISS
+    
+    # from langchain.retrievers import ContextualCompressionRetriever
+    # from langchain.retrievers.document_compressors import CohereRerank
+    # from langchain_community.llms import Cohere
+    
+    # text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
+    # texts = text_splitter.split_documents(retrieved_docs)
+    # retriever = FAISS.from_documents(texts, CohereEmbeddings()).as_retriever(
+    #     search_kwargs={"k": 20}
+    # )
+    # docs = retriever.get_relevant_documents(input)
+    
+    # compressor = CohereRerank()
+    # compression_retriever = ContextualCompressionRetriever(
+    #     base_compressor=compressor, base_retriever=retriever
+    # )
+    # retrieved_docs = compression_retriever.get_relevant_documents(
+    #     input
+    # )
+    # ****
+            
+    def pretty_print_docs(docs):
+        print(
+            f"\n{'-' * 100}\n".join(
+                [f"Document {i+1}:\n\n" + d.page_content for i, d in enumerate(docs)]
+            )
+        )
+    
+    # pretty_print_docs(retrieved_docs)
+    
+    
     context = " ".join([doc.page_content for doc in retrieved_docs])
     
     # Create the language model
@@ -114,6 +146,7 @@ def query_with_retrieval(input: str, db, openai_api_key) -> str:
     llm = OpenAI(openai_api_key=openai_api_key)
 
     # Formulate the prompt with context and question
+    print(input)
     messages = f"""Answer the following questions based only on the provided context:
 
                     {context}

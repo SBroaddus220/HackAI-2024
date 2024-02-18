@@ -57,6 +57,8 @@ def submit_text():
     
     # ****
     # User message
+    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    text = f"Today's date: {current_date}\n\n{text}"
     user_message = {
         "datetime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "role": "user",
