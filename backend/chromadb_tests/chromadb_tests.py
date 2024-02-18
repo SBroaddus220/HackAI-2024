@@ -14,30 +14,25 @@ The following details the retrieval process:
 - The response from the OpenAI language model is printed.
 """
 
-import os
 import logging
 from typing import List
 from pathlib import Path
-from dotenv import load_dotenv
 
-# LangChain imports (so many =_=)
-from langchain.chains import create_retrieval_chain
+# LangChain imports
 from langchain_core.documents import Document
 from langchain.text_splitter import CharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
 from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
 )
 from langchain_community.vectorstores import Chroma
-from langchain_openai import ChatOpenAI, OpenAI
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-from langchain_openai import OpenAIEmbeddings
-from langchain_community.vectorstores import FAISS
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_openai import OpenAI, ChatOpenAI
 
-from langchain.schema import HumanMessage, SystemMessage
+from langchain_community.document_loaders import PyPDFLoader
+
+CHUNK_SIZE = 1000
+CHUNK_OVERLAP = 500
 
 
 # Local imports
@@ -49,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 
 # **********
-def load_documents(documents_dir: Path) -> List[Document]:
+def load_txt_documents(documents_dir: Path) -> List[Document]:
     """Loads `*.txt` documents from a directory into a list of documents to import into ChromaDB.
 
     Args:
@@ -58,37 +53,77 @@ def load_documents(documents_dir: Path) -> List[Document]:
     Returns:
         list: List of documents to import into ChromaDB.
     """
-    # Directory containing the documents
-    documents_dir = Path("./documents")
 
     # Setup for splitting documents into chunks
-    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    # text_splitter = CharacterTextSplitter
+    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        "gpt2", chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
+    )
 
     # This will store chunks from all documents
     docs = []
 
     # Iterate over each text file in the directory
-    for file_path in documents_dir.glob('*.txt'):  # Adjust the pattern if your files have a different extension
+    for file_path in documents_dir.glob(
+        "*.txt"
+    ):  # Adjust the pattern if your files have a different extension
         logger.info(f"Loading document: {file_path}")
         # Load the document
         loader = TextLoader(str(file_path))
         document_content = loader.load()
-        
+
         # Split the current document into chunks
         document_chunks = text_splitter.split_documents(document_content)
-        
+
         # Add the chunks of the current document to the overall list
         docs.extend(document_chunks)
-        
+
     return docs
 
 
-def store_documents(docs: List[Document]) -> Chroma:
+def load_pdf_documents(documents_dir: Path) -> List[Document]:
+    """Loads `*.pdf` documents from a directory into a list of documents to import into ChromaDB.
+
+    Args:
+        documents_dir (Path): Path to directory containing documents.
+
+    Returns:
+        list: List of documents to import into ChromaDB.
+    """
+
+    # Setup for splitting documents into chunks
+    # text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        "gpt2", chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
+    )
+
+    # This will store chunks from all documents
+    docs = []
+
+    # Iterate over each text file in the directory
+    for file_path in documents_dir.glob(
+        "*.pdf"
+    ):  # Adjust the pattern if your files have a different extension
+        logger.info(f"Loading document: {file_path}")
+        # Load the document
+        loader = PyPDFLoader(str(file_path))
+        document_content = loader.load_and_split()
+
+        # Split the current document into chunks
+        document_chunks = text_splitter.split_documents(document_content)
+
+        # Add the chunks of the current document to the overall list
+        docs.extend(document_chunks)
+
+    return docs
+
+
+def store_documents(docs: List[Document], collection_name:str) -> Chroma:
     """Stores documents in a ChromaDB instance.
 
     Args:
         docs (List[Document]): List of documents to store.
-        
+
     Returns:
         Chroma: ChromaDB instance.
     """
@@ -98,39 +133,53 @@ def store_documents(docs: List[Document]) -> Chroma:
 
     # Store the documents
     logger.info("Storing documents in ChromaDB...")
-    db = Chroma.from_documents(docs, embedding_function)
-    
+    db = Chroma.from_documents(docs, embedding_function, collection_name=collection_name)
+
     return db
 
 
 def query_with_retrieval(input: str, db, openai_api_key) -> str:
     # Retrieve documents with similar content to input
     logger.info("Retrieving documents with similar content to input...")
+    print(db)
+    print("--------------------")
     retrieved_docs = db.similarity_search(input)
+    
+    print(retrieved_docs)
+            
+    def pretty_print_docs(docs):
+        print(
+            f"\n{'-' * 100}\n".join(
+                [f"Document {i+1}:\n\n" + d.page_content for i, d in enumerate(docs)]
+            )
+        )
+    
+    # pretty_print_docs(retrieved_docs)
+    
+    
     context = " ".join([doc.page_content for doc in retrieved_docs])
     
-    # Create the language model
-    logger.info("Creating language model...")
-    llm = OpenAI(openai_api_key=openai_api_key)
+    chat = ChatOpenAI(openai_api_key=openai_api_key)
+    
+    from langchain_core.messages import HumanMessage, SystemMessage
 
-    # Formulate the prompt with context and question
-    messages = f"""Answer the following questions based only on the provided context:
+    messages = [
+        SystemMessage(content=f"Answer the following questions based only on the provided context: {context}"),
+        HumanMessage(content=input),
+    ]
+    
 
-                    {context}
-                    
-                    Question: {input}"""
+    response  = chat.invoke(messages)
 
-    # Invoke the language model with the prompt
-    logger.info("Invoking language model with prompt...")
-    response = llm.invoke(messages)
+    return response.content
 
-    return response
 
 
 # **********
 def main():
     pass
 
-# ********** 
+
+# **********
 if __name__ == "__main__":
     main()

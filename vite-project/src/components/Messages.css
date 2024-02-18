@@ -1,0 +1,83 @@
+.messages-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px;
+  overflow-y: auto;
+  margin-top: 50px; /* Added missing unit */
+  margin-bottom: auto;
+  max-width: 600px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.User-message,
+.Bot-message {
+  border-radius: 15px;
+  padding: 10px 15px;
+  margin: 10px 0; /* Consistent spacing */
+  box-shadow: 0 14px 8px rgba(0, 0, 0, 0.5); /* Subtle shadow for better readability */
+  max-width: 80%;
+  word-wrap: break-word;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 1rem;
+  transition: transform 0.2s; /* Smooth transition for hover effect */
+}
+
+.User-message {
+  align-self: flex-end;
+  background-color: #007bff;
+  color: white;
+}
+
+.Bot-message {
+  align-self: flex-start;
+  background-color: #d23232;
+  color: white; /* Ensuring text is readable */
+}
+
+.User-message:hover {
+  transform: translateY(-2px); /* Slight raise effect on hover */
+   background-color: #007bffd4;
+}
+.Bot-message:hover {
+  transform: translateY(-2px); /* Slight raise effect on hover */
+  background-color: #d23232df;
+}
+.profile-picture {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%; /* circular images */
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.message {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.timestamp {
+  font-size: 0.8em;
+  color: #f0f0f0; /* Lighter color for better contrast */
+  font-style: italic;
+  display: block;
+  margin-top: 5px;
+  text-align: right;
+}
+
+
+/* Responsive Design Adjustments */
+@media (max-width: 768px) {
+  .User-message,
+  .Bot-message {
+    max-width: 90%; /* More screen width used for messages on smaller screens */
+    font-size: 0.9rem; /* Slightly smaller font for smaller screens */
+  }
+
+  .timestamp {
+    font-size: 0.7em; /* Smaller timestamp font for smaller screens */
+  }
+}

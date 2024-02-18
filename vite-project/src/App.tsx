@@ -1,18 +1,23 @@
-// src/App.tsx
-import React from 'react';
+// App.tsx
+import React, { useState } from 'react';
 import TextBoxComponent from './components/TextBox';
 import Messages from './components/Messages';
 import { MessagesProvider } from './contexts/MessagesContext';
 
 function App() {
-  return (
-    <div>
-      <MessagesProvider>
-        <Messages />
-        <TextBoxComponent />
-      </MessagesProvider>
-    </div>
-  );
+    const [selectedOption, setSelectedOption] = useState<string>('');
+
+    return (
+        <div style={{
+            position: 'absolute', left: '50%', top: '50%',
+            transform: 'translate(-50%, -50%)'
+        }} >
+            <MessagesProvider>
+                <Messages />
+                <TextBoxComponent selectedOption={selectedOption} />
+            </MessagesProvider>
+        </div>
+    );
 }
 
 export default App;

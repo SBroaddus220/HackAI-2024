@@ -160,3 +160,5 @@ cython_debug/
 #.idea/
 
 program_log.txt
+
+backend/llamafile_models/*
