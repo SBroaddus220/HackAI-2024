@@ -32,6 +32,7 @@ from langchain_openai import OpenAI
 from langchain_community.document_loaders import PyPDFLoader
 
 CHUNK_SIZE = 1000
+CHUNK_OVERLAP = 500
 
 
 # Local imports
@@ -56,9 +57,9 @@ def load_txt_documents(documents_dir: Path) -> List[Document]:
     documents_dir = Path("./documents/txt")
 
     # Setup for splitting documents into chunks
-    # text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    # text_splitter = CharacterTextSplitter
     text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-        'gpt2', chunk_size=CHUNK_SIZE, chunk_overlap=0
+        'gpt2', chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
     )
 
     # This will store chunks from all documents
@@ -94,7 +95,7 @@ def load_pdf_documents(documents_dir: Path) -> List[Document]:
     # Setup for splitting documents into chunks
     # text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-        'gpt2', chunk_size=100, chunk_overlap=0
+        'gpt2', chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
     )
 
     # This will store chunks from all documents
@@ -175,7 +176,7 @@ def query_with_retrieval(input: str, db, openai_api_key) -> str:
             )
         )
     
-    pretty_print_docs(retrieved_docs)
+    # pretty_print_docs(retrieved_docs)
     
     
     context = " ".join([doc.page_content for doc in retrieved_docs])
