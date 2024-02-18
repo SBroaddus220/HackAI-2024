@@ -16,7 +16,7 @@
 .Bot-message {
   border-radius: 15px;
   padding: 10px 15px;
-  margin: 5px 0; /* Consistent spacing */
+  margin: 10px 0; /* Consistent spacing */
   box-shadow: 0 14px 8px rgba(0, 0, 0, 0.5); /* Subtle shadow for better readability */
   max-width: 80%;
   word-wrap: break-word;
@@ -37,10 +37,13 @@
   color: white; /* Ensuring text is readable */
 }
 
-.User-message:hover,
+.User-message:hover {
+  transform: translateY(-2px); /* Slight raise effect on hover */
+   background-color: #007bffd4;
+}
 .Bot-message:hover {
   transform: translateY(-2px); /* Slight raise effect on hover */
-
+  background-color: #d23232df;
 }
 .profile-picture {
   width: 40px;
