@@ -54,6 +54,8 @@ def hello_world():
 def submit_text():
     data = request.json
     text = data["text"]
+    context = data["context"]
+
     
     # ****
     # User message
