@@ -67,7 +67,8 @@ const TextBoxComponent: React.FC<TextBoxProps> = ({ selectedOption }) => {
                     onChange={(e) => setText(e.target.value)}
                     className="center-input"
                 />
-                <button type="submit" disabled={isSubmitting}>Submit</button>
+                <br/>
+                <button type="submit" disabled={isSubmitting} className = 'submitButton'>Submit</button>
                 {isSubmitting && <div className="spinner"></div>} {/* Conditionally render the spinner */}
             </form>
             <select onChange={handleSelection}>

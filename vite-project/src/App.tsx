@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import TextBoxComponent from './components/TextBox';
 import Messages from './components/Messages';
+import Footer from './components/Footer'
 import { MessagesProvider } from './contexts/MessagesContext';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
             <MessagesProvider>
                 <Messages />
                 <TextBoxComponent selectedOption={selectedOption} />
+                <Footer/>
             </MessagesProvider>
         </div>
     );
