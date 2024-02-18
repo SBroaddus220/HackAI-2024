@@ -20,6 +20,11 @@ const Authors: React.FC = () => {
                     <h3>Steven Broaddus</h3>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet sem nec mi elementum fermentum.</p>
                 </div>
+				<div>
+                    <img src="https://via.placeholder.com/150" alt="Steven Broaddus" />
+                    <h3>Joshua A'neal-Pack</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet sem nec mi elementum fermentum.</p>
+                </div>
             </div>
         </div>
     );

@@ -23,6 +23,12 @@ const Contacts: React.FC = () => {
                     <p>Email: steven.broaddus@example.com</p>
                     <p>Phone: 123-456-7890</p>
                 </div>
+                <div>
+                    <img src="https://via.placeholder.com/150" alt="Steven Broaddus" />
+                    <h3>Joshua A'neal-Pack</h3>
+                    <p>Email: josh.pack@example.com</p>
+                    <p>Phone: 123-456-7890</p>
+                </div>
             </div>
         </div>
     );
