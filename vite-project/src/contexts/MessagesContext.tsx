@@ -1,6 +1,5 @@
 // src/contexts/MessagesContext.tsx
 import React, { createContext, useState, useContext, ReactNode } from 'react';
-
 interface IMessage {
     datetime: string;
     role: string;
