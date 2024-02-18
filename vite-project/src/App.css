@@ -1,11 +1,12 @@
 #root {
-  max-width: 1280px;
+  max-width: 80%;
   margin-right: auto;
   margin-left: auto;
   margin-top: auto;
   padding: 2rem;
   text-align: center;
 }
+
 
 .center-container {
   display: flex;
@@ -20,7 +21,7 @@
 }
 
 .center-input {
-  text-align: center;
+  text-align: left;
   margin-bottom: 10px;
 }
 

@@ -1,10 +1,19 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, FormEvent, useEffect, useRef } from 'react';
 import { useMessages } from '../contexts/MessagesContext';
 
 function TextBoxComponent() {
     const [text, setText] = useState<string>('');
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const { addMessage } = useMessages();
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    useEffect(() => {
+        if (textareaRef.current) {
+            // Dynamically adjust the height to fit the content
+            textareaRef.current.style.height = 'auto'; // Reset height to recalculate
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+        }
+    }, [text]);
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -23,8 +32,8 @@ function TextBoxComponent() {
             }
 
             const responseData = await response.json();
-            setText(''); // Clear input field
-            // Add user message
+            setText(''); // Clear input field after submission
+            // Add user message to the chat
             addMessage({
                 datetime: new Date().toISOString(),
                 role: 'User',
@@ -41,18 +50,29 @@ function TextBoxComponent() {
         } catch (error) {
             console.error('Error:', error);
         } finally {
-            setIsSubmitting(false); // Re-enable the button
+            setIsSubmitting(false); // Re-enable the button after submission
         }
     };
 
     return (
         <div className="center-container">
             <form onSubmit={handleSubmit} className="center-form">
-                <input
-                    type="text"
+                <textarea
+                    ref={textareaRef}
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     className="center-input"
+                    style={{
+                        resize: 'none', // Allow vertical resizing only
+                        width: '200%', // This will now effectively be 80% of the viewport width due to #root's max-width
+                        minWidth: '100px', // Minimum width
+                        minHeight: '50px', // Minimum height
+                        paddingLeft: '1px',
+                        paddingRight: '1px',
+                        overflowY: 'auto' // Automatically add scrollbar when needed
+                    }}
+                    
+                    rows={1} // Start with a single row
                 />
                 <button type="submit" disabled={isSubmitting}>Submit</button>
                 {isSubmitting && <div className="spinner"></div>} {/* Conditionally render the spinner */}

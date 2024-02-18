@@ -11,14 +11,17 @@ function App() {
       position: 'relative', top: '50%', left: '50%',
       transform: 'translate(-50%)'
     }} >
+      
       <MessagesProvider>
+
         <Messages />
+        
         <TextBoxComponent />
       </MessagesProvider>
       <footer className = 'infoFooter'>
-        <a href='authors.html'>Creators &emsp;&emsp;</a>
-        <a href='resources.html'>Resources Utilized &emsp;&emsp;</a>
-        <a href='contactus.html'>Contact Us</a>
+        <a href='/authors.html'>Creators &emsp;&emsp;</a>
+        <a href='/resources.html'>Resources Utilized &emsp;&emsp;</a>
+        <a href='/contactus.html'>Contact Us</a>
       </footer>
     </div>
     
