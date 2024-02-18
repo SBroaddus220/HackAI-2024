@@ -24,7 +24,7 @@ const Messages: React.FC = () => {
             {messages.map((message, index) => (
                 <div key={index} className={`${message.role}-message message`}>
                     <img src={defaultProfilePic} alt="Profile" className="profile-picture" />
-                    <div>
+                    <div className = 'messageContent'>
                         <strong>{message.role}:</strong> {message.message}
                         <div className="timestamp">{formatDate(message.datetime)}</div>
                     </div>

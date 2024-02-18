@@ -6,42 +6,46 @@
   overflow-y: auto;
   margin-top: 50px; /* Added missing unit */
   margin-bottom: auto;
-  max-width: 600px;
+  max-width: 100%;
   width: 100%;
   margin-left: auto;
   margin-right: auto;
 }
 
-.User-message,
-.Bot-message {
+.You-message,
+.AdviseGPT-message {
   border-radius: 15px;
   padding: 10px 15px;
   margin: 10px 0; /* Consistent spacing */
   box-shadow: 0 14px 8px rgba(0, 0, 0, 0.5); /* Subtle shadow for better readability */
   max-width: 80%;
+  text-align: center;
   word-wrap: break-word;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 1rem;
   transition: transform 0.2s; /* Smooth transition for hover effect */
 }
 
-.User-message {
+.You-message {
   align-self: flex-end;
   background-color: #007bff;
   color: white;
 }
 
-.Bot-message {
+.AdviseGPT-message {
   align-self: flex-start;
   background-color: #d23232;
   color: white; /* Ensuring text is readable */
 }
+.messageContent{
+  text-align: center;
+}
 
-.User-message:hover {
+.You-message:hover {
   transform: translateY(-2px); /* Slight raise effect on hover */
    background-color: #007bffd4;
 }
-.Bot-message:hover {
+.AdviseGPT-message:hover {
   transform: translateY(-2px); /* Slight raise effect on hover */
   background-color: #d23232df;
 }
@@ -71,8 +75,8 @@
 
 /* Responsive Design Adjustments */
 @media (max-width: 768px) {
-  .User-message,
-  .Bot-message {
+  .You-message,
+  .AdviseGPT-message {
     max-width: 90%; /* More screen width used for messages on smaller screens */
     font-size: 0.9rem; /* Slightly smaller font for smaller screens */
   }

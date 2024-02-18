@@ -1,6 +1,7 @@
 // TextBox.tsx
 import React, { useState, FormEvent } from 'react';
 import { useMessages } from '../contexts/MessagesContext';
+import '../App.css';
 
 interface TextBoxProps {
     selectedOption: string; // Prop to hold the selected value from the dropdown
@@ -38,7 +39,7 @@ const TextBoxComponent: React.FC<TextBoxProps> = ({ selectedOption }) => {
             // Add user message with context
             addMessage({
                 datetime: new Date().toISOString(),
-                role: 'User',
+                role: 'You',
                 message: text,
                 context: selectedOption
             });
@@ -46,7 +47,7 @@ const TextBoxComponent: React.FC<TextBoxProps> = ({ selectedOption }) => {
             if (responseData.response) {
                 addMessage({
                     datetime: new Date().toISOString(),
-                    role: 'Bot',
+                    role: 'AdviseGPT',
                     message: responseData.response.message,
                     context: 'spec'
                 });
@@ -61,20 +62,22 @@ const TextBoxComponent: React.FC<TextBoxProps> = ({ selectedOption }) => {
     return (
         <div className="center-container">
             <form onSubmit={handleSubmit} className="center-form">
+                <br/>
                 <input
                     type="text"
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     className="center-input"
                 />
-                <br/>
                 <button type="submit" className = 'submit-button' disabled={isSubmitting}>Submit</button>
                 {isSubmitting && <div className="spinner"></div>} {/* Conditionally render the spinner */}
-            </form>
-            <select onChange={handleSelection}>
+                <br/>
+                {/* <select onChange={handleSelection}>
                 <option value="reqs">Major Requirements for CSE</option>
                 <option value="spec">Specialization Option</option>
-            </select>
+            </select> */}
+            </form>
+            
         </div>
     );
 };
