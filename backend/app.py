@@ -39,19 +39,18 @@ if not OPENAI_API_KEY:
 
 # **********
 def init_chromadb():
-    global db
     global db_spec
     global db_reqs
     documents_txt_dir = Path("./documents/txt")
     documents_pdf_dir = Path("./documents/pdf")
-    docs = load_txt_documents(documents_txt_dir)
-    docs.extend(load_pdf_documents(documents_pdf_dir))
+    # docs = load_txt_documents(documents_txt_dir)
+    # docs.extend(load_pdf_documents(documents_pdf_dir))
     docs_reqs = load_txt_documents(documents_txt_dir)
     docs_spec = load_pdf_documents(documents_pdf_dir)
 
-    db_reqs = store_documents(docs_reqs)
-    db_spec = store_documents(docs_spec)
-    db = store_documents(docs)
+    db_reqs = store_documents(docs_reqs, "docs_reqs")
+    db_spec = store_documents(docs_spec, "docs_spec")
+    # db = store_documents(docs)
     logger.info("ChromaDB initialized with documents.")
 
 
@@ -74,7 +73,8 @@ def submit_text():
 
     # ****
     # User message
-    text = f"You are a helpful assistant intended to advise undergraduate CSE students. Please answer the the user's questions directly and based on the additional context provided based on relevant documentation."
+    text = f"""You are a helpful assistant intended to advise undergraduate CSE students. Please answer the the user's questions directly and based on the additional context provided based on relevant documentation.
+           Questions: {text}"""
     user_message = {
         "datetime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "role": "user",

@@ -27,7 +27,7 @@ from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
 )
 from langchain_community.vectorstores import Chroma
-from langchain_openai import OpenAI
+from langchain_openai import OpenAI, ChatOpenAI
 
 from langchain_community.document_loaders import PyPDFLoader
 
@@ -53,8 +53,6 @@ def load_txt_documents(documents_dir: Path) -> List[Document]:
     Returns:
         list: List of documents to import into ChromaDB.
     """
-    # Directory containing the documents
-    documents_dir = Path("./documents/txt")
 
     # Setup for splitting documents into chunks
     # text_splitter = CharacterTextSplitter
@@ -92,8 +90,6 @@ def load_pdf_documents(documents_dir: Path) -> List[Document]:
     Returns:
         list: List of documents to import into ChromaDB.
     """
-    # Directory containing the documents
-    documents_dir = Path("./documents/pdf")
 
     # Setup for splitting documents into chunks
     # text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
@@ -122,7 +118,7 @@ def load_pdf_documents(documents_dir: Path) -> List[Document]:
     return docs
 
 
-def store_documents(docs: List[Document]) -> Chroma:
+def store_documents(docs: List[Document], collection_name:str) -> Chroma:
     """Stores documents in a ChromaDB instance.
 
     Args:
@@ -137,7 +133,7 @@ def store_documents(docs: List[Document]) -> Chroma:
 
     # Store the documents
     logger.info("Storing documents in ChromaDB...")
-    db = Chroma.from_documents(docs, embedding_function)
+    db = Chroma.from_documents(docs, embedding_function, collection_name=collection_name)
 
     return db
 
@@ -145,66 +141,38 @@ def store_documents(docs: List[Document]) -> Chroma:
 def query_with_retrieval(input: str, db, openai_api_key) -> str:
     # Retrieve documents with similar content to input
     logger.info("Retrieving documents with similar content to input...")
+    print(db)
+    print("--------------------")
     retrieved_docs = db.similarity_search(input)
-
-    # ****
-    # Test using Cohere to compress and rerank the documents
-    # from langchain.text_splitter import RecursiveCharacterTextSplitter
-    # from langchain_community.document_loaders import TextLoader
-    # from langchain_community.embeddings import CohereEmbeddings
-    # from langchain_community.vectorstores import FAISS
-
-    # from langchain.retrievers import ContextualCompressionRetriever
-    # from langchain.retrievers.document_compressors import CohereRerank
-    # from langchain_community.llms import Cohere
-
-    # text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
-    # texts = text_splitter.split_documents(retrieved_docs)
-    # retriever = FAISS.from_documents(texts, CohereEmbeddings()).as_retriever(
-    #     search_kwargs={"k": 20}
-    # )
-    # docs = retriever.get_relevant_documents(input)
-
-    # compressor = CohereRerank()
-    # compression_retriever = ContextualCompressionRetriever(
-    #     base_compressor=compressor, base_retriever=retriever
-    # )
-    # retrieved_docs = compression_retriever.get_relevant_documents(
-    #     input
-    # )
-    # ****
-
+    
+    print(retrieved_docs)
+            
     def pretty_print_docs(docs):
         print(
             f"\n{'-' * 100}\n".join(
                 [f"Document {i+1}:\n\n" + d.page_content for i, d in enumerate(docs)]
             )
         )
-
+    
     # pretty_print_docs(retrieved_docs)
-
+    
+    
     context = " ".join([doc.page_content for doc in retrieved_docs])
+    
+    chat = ChatOpenAI(openai_api_key=openai_api_key)
+    
+    from langchain_core.messages import HumanMessage, SystemMessage
 
-    # Create the language model
-    logger.info("Creating language model...")
-    llm = OpenAI(openai_api_key=openai_api_key)
+    messages = [
+        SystemMessage(content=f"Answer the following questions based only on the provided context: {context}"),
+        HumanMessage(content=input),
+    ]
+    
 
-    # Formulate the prompt with context and question
-    print(input)
-    messages = f"""Answer the following questions based only on the provided context:
+    response  = chat.invoke(messages)
 
-                    {context}
-                    
-                    Question: {input}
+    return response.content
 
-                    Answer: """
-
-    # Invoke the language model with the prompt
-    logger.info("Invoking language model with prompt...")
-    print(f"messages: {messages}")
-    response = llm.invoke(messages)
-
-    return response
 
 
 # **********
