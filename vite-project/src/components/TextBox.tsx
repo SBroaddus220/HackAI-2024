@@ -11,10 +11,10 @@ const TextBoxComponent: React.FC<TextBoxProps> = ({ selectedOption }) => {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const { addMessage } = useMessages();
     const [context, setContext] = useState<string>('reqs');
-        const handleSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
-            setContext(event.target.value);
-        };
-    
+    const handleSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setContext(event.target.value);
+    };
+
 
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -72,7 +72,7 @@ const TextBoxComponent: React.FC<TextBoxProps> = ({ selectedOption }) => {
             </form>
             <select onChange={handleSelection}>
                 <option value="reqs">Major Requirements for CSE</option>
-                <option value="specs">Specialization Option</option>
+                <option value="spec">Specialization Option</option>
             </select>
         </div>
     );

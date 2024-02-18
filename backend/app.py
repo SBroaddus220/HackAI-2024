@@ -74,8 +74,7 @@ def submit_text():
 
     # ****
     # User message
-    current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    text = f"Today's date: {current_date}\n\n{text}"
+    text = f"You are a helpful assistant intended to advise undergraduate CSE students. Please answer the the user's questions directly and based on the additional context provided based on relevant documentation."
     user_message = {
         "datetime": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "role": "user",
