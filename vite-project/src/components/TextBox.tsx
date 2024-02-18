@@ -1,20 +1,15 @@
-// src/components/TextBox.tsx
 import React, { useState, FormEvent } from 'react';
 import { useMessages } from '../contexts/MessagesContext';
 
 function TextBoxComponent() {
     const [text, setText] = useState<string>('');
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const { addMessage } = useMessages();
-    const getServerURL = () => {
-        const { protocol, hostname, port } = window.location;
-        return `${protocol}//${hostname}:${port}/submit-text`;
-    };
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setIsSubmitting(true);
         try {
-            // Send the text to the server
-            console.log("Submitting text: ", text);
             const response = await fetch('/api/submit-text', {
                 method: 'POST',
                 headers: {
@@ -23,40 +18,32 @@ function TextBoxComponent() {
                 body: JSON.stringify({ text }),
             });
 
-            // If the response is not OK, throw an error
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            // Parse the JSON response
-            try {
-                const responseData = await response.json();
-                console.log(responseData.message);
-                setText(''); // Clear the text after successful submission
-                // Add the new message to the context
+            const responseData = await response.json();
+            setText(''); // Clear input field
+            // Add user message
+            addMessage({
+                datetime: new Date().toISOString(),
+                role: 'User',
+                message: text
+            });
+            // Optionally handle bot response
+            if (responseData.response) {
                 addMessage({
                     datetime: new Date().toISOString(),
-                    role: 'user',
-                    message: text
+                    role: 'Bot',
+                    message: responseData.response.message
                 });
-
-                // Handle the response from the server
-                if (responseData.response) {
-                    console.log(responseData.response);
-                    addMessage({
-                        datetime: new Date().toISOString(),
-                        role: 'bot',
-                        message: responseData.response.message
-                    });
-                }
-            } catch (error) {
-                console.error('Server returned an error:', response.status, response.statusText);
             }
-        } catch (error: any) {
-            console.error('Error:', error.message);
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            setIsSubmitting(false); // Re-enable the button
         }
     };
-
 
     return (
         <div className="center-container">
@@ -67,7 +54,8 @@ function TextBoxComponent() {
                     onChange={(e) => setText(e.target.value)}
                     className="center-input"
                 />
-                <button type="submit">Submit</button>
+                <button type="submit" disabled={isSubmitting}>Submit</button>
+                {isSubmitting && <div className="spinner"></div>} {/* Conditionally render the spinner */}
             </form>
         </div>
     );
