@@ -29,6 +29,9 @@ from langchain_community.embeddings.sentence_transformer import (
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAI
 
+from langchain_community.document_loaders import PyPDFLoader
+
+CHUNK_SIZE = 1000
 
 
 # Local imports
@@ -40,7 +43,7 @@ logger = logging.getLogger(__name__)
 
 
 # **********
-def load_documents(documents_dir: Path) -> List[Document]:
+def load_txt_documents(documents_dir: Path) -> List[Document]:
     """Loads `*.txt` documents from a directory into a list of documents to import into ChromaDB.
 
     Args:
@@ -50,12 +53,12 @@ def load_documents(documents_dir: Path) -> List[Document]:
         list: List of documents to import into ChromaDB.
     """
     # Directory containing the documents
-    documents_dir = Path("./documents")
+    documents_dir = Path("./documents/txt")
 
     # Setup for splitting documents into chunks
     # text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-        'gpt2', chunk_size=100, chunk_overlap=0
+        'gpt2', chunk_size=CHUNK_SIZE, chunk_overlap=0
     )
 
     # This will store chunks from all documents
@@ -67,6 +70,42 @@ def load_documents(documents_dir: Path) -> List[Document]:
         # Load the document
         loader = TextLoader(str(file_path))
         document_content = loader.load()
+        
+        # Split the current document into chunks
+        document_chunks = text_splitter.split_documents(document_content)
+        
+        # Add the chunks of the current document to the overall list
+        docs.extend(document_chunks)
+        
+    return docs
+
+def load_pdf_documents(documents_dir: Path) -> List[Document]:
+    """Loads `*.pdf` documents from a directory into a list of documents to import into ChromaDB.
+
+    Args:
+        documents_dir (Path): Path to directory containing documents.
+
+    Returns:
+        list: List of documents to import into ChromaDB.
+    """
+    # Directory containing the documents
+    documents_dir = Path("./documents/pdf")
+
+    # Setup for splitting documents into chunks
+    # text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        'gpt2', chunk_size=100, chunk_overlap=0
+    )
+
+    # This will store chunks from all documents
+    docs = []
+
+    # Iterate over each text file in the directory
+    for file_path in documents_dir.glob('*.pdf'):  # Adjust the pattern if your files have a different extension
+        logger.info(f"Loading document: {file_path}")
+        # Load the document
+        loader = PyPDFLoader(str(file_path))
+        document_content = loader.load_and_split()
         
         # Split the current document into chunks
         document_chunks = text_splitter.split_documents(document_content)
@@ -104,29 +143,29 @@ def query_with_retrieval(input: str, db, openai_api_key) -> str:
     
     # ****
     # Test using Cohere to compress and rerank the documents
-    # from langchain.text_splitter import RecursiveCharacterTextSplitter
-    # from langchain_community.document_loaders import TextLoader
-    # from langchain_community.embeddings import CohereEmbeddings
-    # from langchain_community.vectorstores import FAISS
+    from langchain.text_splitter import RecursiveCharacterTextSplitter
+    from langchain_community.document_loaders import TextLoader
+    from langchain_community.embeddings import CohereEmbeddings
+    from langchain_community.vectorstores import FAISS
     
-    # from langchain.retrievers import ContextualCompressionRetriever
-    # from langchain.retrievers.document_compressors import CohereRerank
-    # from langchain_community.llms import Cohere
+    from langchain.retrievers import ContextualCompressionRetriever
+    from langchain.retrievers.document_compressors import CohereRerank
+    from langchain_community.llms import Cohere
     
-    # text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
-    # texts = text_splitter.split_documents(retrieved_docs)
-    # retriever = FAISS.from_documents(texts, CohereEmbeddings()).as_retriever(
-    #     search_kwargs={"k": 20}
-    # )
-    # docs = retriever.get_relevant_documents(input)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
+    texts = text_splitter.split_documents(retrieved_docs)
+    retriever = FAISS.from_documents(texts, CohereEmbeddings()).as_retriever(
+        search_kwargs={"k": 20}
+    )
+    docs = retriever.get_relevant_documents(input)
     
-    # compressor = CohereRerank()
-    # compression_retriever = ContextualCompressionRetriever(
-    #     base_compressor=compressor, base_retriever=retriever
-    # )
-    # retrieved_docs = compression_retriever.get_relevant_documents(
-    #     input
-    # )
+    compressor = CohereRerank()
+    compression_retriever = ContextualCompressionRetriever(
+        base_compressor=compressor, base_retriever=retriever
+    )
+    retrieved_docs = compression_retriever.get_relevant_documents(
+        input
+    )
     # ****
             
     def pretty_print_docs(docs):
@@ -136,7 +175,7 @@ def query_with_retrieval(input: str, db, openai_api_key) -> str:
             )
         )
     
-    # pretty_print_docs(retrieved_docs)
+    pretty_print_docs(retrieved_docs)
     
     
     context = " ".join([doc.page_content for doc in retrieved_docs])
