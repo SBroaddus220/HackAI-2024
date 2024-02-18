@@ -141,11 +141,7 @@ def store_documents(docs: List[Document], collection_name:str) -> Chroma:
 def query_with_retrieval(input: str, db, openai_api_key) -> str:
     # Retrieve documents with similar content to input
     logger.info("Retrieving documents with similar content to input...")
-    print(db)
-    print("--------------------")
     retrieved_docs = db.similarity_search(input)
-    
-    print(retrieved_docs)
             
     def pretty_print_docs(docs):
         print(
