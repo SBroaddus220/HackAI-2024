@@ -15,7 +15,13 @@ function App() {
         <Messages />
         <TextBoxComponent />
       </MessagesProvider>
+      <footer className = 'infoFooter'>
+        <a href='authors.html'>Creators &emsp;&emsp;</a>
+        <a href='resources.html'>Resources Utilized &emsp;&emsp;</a>
+        <a href='contactus.html'>Contact Us</a>
+      </footer>
     </div>
+    
     
   );
 }
