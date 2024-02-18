@@ -143,29 +143,29 @@ def query_with_retrieval(input: str, db, openai_api_key) -> str:
     
     # ****
     # Test using Cohere to compress and rerank the documents
-    from langchain.text_splitter import RecursiveCharacterTextSplitter
-    from langchain_community.document_loaders import TextLoader
-    from langchain_community.embeddings import CohereEmbeddings
-    from langchain_community.vectorstores import FAISS
+    # from langchain.text_splitter import RecursiveCharacterTextSplitter
+    # from langchain_community.document_loaders import TextLoader
+    # from langchain_community.embeddings import CohereEmbeddings
+    # from langchain_community.vectorstores import FAISS
     
-    from langchain.retrievers import ContextualCompressionRetriever
-    from langchain.retrievers.document_compressors import CohereRerank
-    from langchain_community.llms import Cohere
+    # from langchain.retrievers import ContextualCompressionRetriever
+    # from langchain.retrievers.document_compressors import CohereRerank
+    # from langchain_community.llms import Cohere
     
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
-    texts = text_splitter.split_documents(retrieved_docs)
-    retriever = FAISS.from_documents(texts, CohereEmbeddings()).as_retriever(
-        search_kwargs={"k": 20}
-    )
-    docs = retriever.get_relevant_documents(input)
+    # text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
+    # texts = text_splitter.split_documents(retrieved_docs)
+    # retriever = FAISS.from_documents(texts, CohereEmbeddings()).as_retriever(
+    #     search_kwargs={"k": 20}
+    # )
+    # docs = retriever.get_relevant_documents(input)
     
-    compressor = CohereRerank()
-    compression_retriever = ContextualCompressionRetriever(
-        base_compressor=compressor, base_retriever=retriever
-    )
-    retrieved_docs = compression_retriever.get_relevant_documents(
-        input
-    )
+    # compressor = CohereRerank()
+    # compression_retriever = ContextualCompressionRetriever(
+    #     base_compressor=compressor, base_retriever=retriever
+    # )
+    # retrieved_docs = compression_retriever.get_relevant_documents(
+    #     input
+    # )
     # ****
             
     def pretty_print_docs(docs):
